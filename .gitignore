@@ -1,0 +1,10 @@
+.config/zed/prompts/*
+.config/zed/sessions/*
+.config/zed/workspaces/*
+.vscode/*
+.idea/*
+*.log
+*.tmp
+*.swp
+*.swo
+.DS_Store
