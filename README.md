@@ -167,6 +167,7 @@ El líder es `<Space>`.
 | Modo | Hotkey | Acción |
 |------|--------|--------|
 | Normal | `K` | Hover / documentación |
+| Insert | `<C-k>` | Signature help |
 | Normal | `<leader>rn` | Rename symbol |
 | Normal | `<leader>ca` | Code action |
 | Normal | `<leader>f` | Format (LSP) |
