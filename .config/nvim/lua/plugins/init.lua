@@ -19,6 +19,7 @@ return {
         cmd = "Telescope",
         keys = {
             { "<leader>ff", "<cmd>Telescope find_files<cr>",          desc = "Find files" },
+            { "<leader>fa", "<cmd>Telescope find_files hidden=true<cr>", desc = "Find all files (hidden)" },
             { "<leader>fg", "<cmd>Telescope live_grep<cr>",           desc = "Live grep" },
             { "gd",         "<cmd>Telescope lsp_definitions<cr>",     desc = "Definitions" },
             { "gr",         "<cmd>Telescope lsp_references<cr>",      desc = "References" },
@@ -31,13 +32,16 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
+        branch = "main",
         build = ":TSUpdate",
-        event = { "BufReadPost", "BufNewFile" },
+        lazy = false,
         config = function()
-            require("nvim-treesitter.configs").setup {
-                ensure_installed = { "lua", "typescript", "javascript", "rust", "json", "markdown" },
-                highlight = { enable = true }
-            }
+            local ensure_installed = { "lua", "typescript", "javascript", "rust", "json", "markdown" }
+            require("nvim-treesitter").install(ensure_installed)
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = ensure_installed,
+                callback = function() vim.treesitter.start() end,
+            })
         end
     },
 
