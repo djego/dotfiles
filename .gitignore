@@ -1,6 +1,6 @@
-.config/zed/prompts/*
-.config/zed/sessions/*
-.config/zed/workspaces/*
+config/zed/prompts/*
+config/zed/sessions/*
+config/zed/workspaces/*
 .vscode/*
 .idea/*
 *.log

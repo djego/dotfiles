@@ -32,15 +32,19 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
-        branch = "main",
+        branch = "master",
         build = ":TSUpdate",
         lazy = false,
         config = function()
-            local ensure_installed = { "lua", "typescript", "javascript", "rust", "json", "markdown" }
-            require("nvim-treesitter").install(ensure_installed)
-            vim.api.nvim_create_autocmd("FileType", {
-                pattern = ensure_installed,
-                callback = function() vim.treesitter.start() end,
+            require("nvim-treesitter.configs").setup({
+                ensure_installed = { "lua", "typescript", "javascript", "rust", "json", "markdown" },
+                highlight = {
+                    enable = true,
+                    -- bug de Neovim 0.12: conceal_lines en fenced code blocks llama .range() sobre un nodo nil
+                    -- https://github.com/neovim/neovim/issues/39032
+                    disable = { "markdown" },
+                },
+                indent = { enable = true },
             })
         end
     },
@@ -120,7 +124,7 @@ return {
                 settings = {
                     Lua = {
                         diagnostics = {
-                            globals = { "vim" }
+                            globals = { "vim", "hl" }
                         }
                     }
                 }

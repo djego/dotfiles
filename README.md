@@ -1,20 +1,25 @@
 # dotfiles
 
-![Platform](https://img.shields.io/badge/platform-macOS-lightgrey)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Arch%20Linux-lightgrey)
 ![Neovim](https://img.shields.io/badge/Neovim-0.9%2B-57A143?logo=neovim)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-Configuraciones personales para un entorno de desarrollo macOS orientado a la terminal. El objetivo es un setup minimalista, rápido y coherente visualmente usando [Catppuccin](https://github.com/catppuccin/catppuccin) como tema unificado en todas las herramientas.
+Configuraciones personales para un entorno de desarrollo orientado a la terminal, reutilizable entre macOS y Arch Linux. El objetivo es un setup minimalista, rápido y coherente visualmente usando [Catppuccin](https://github.com/catppuccin/catppuccin) como tema unificado en todas las herramientas. Los symlinks se gestionan con [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## Stack
 
-| Herramienta | Rol | Nota |
-|-------------|-----|------|
-| [Neovim](https://neovim.io) | Editor principal | Lazy.nvim, LSP, Copilot |
-| [WezTerm](https://wezfurlong.org/wezterm/) | Terminal | GPU-accelerated, splits nativos |
-| [Aerospace](https://github.com/nikitabobko/AeroSpace) | Window manager | i3-like para macOS |
-| [Zed](https://zed.dev) | Editor alternativo | Vim mode, carga rápida |
-| Catppuccin | Tema | Latte (light) / Mocha (dark), dinámico |
+| Herramienta | Rol | Nota | Plataforma |
+|-------------|-----|------|------------|
+| [Neovim](https://neovim.io) | Editor principal | Lazy.nvim, LSP, Copilot | macOS + Linux |
+| [WezTerm](https://wezfurlong.org/wezterm/) | Terminal | GPU-accelerated, splits nativos | macOS + Linux |
+| [Zed](https://zed.dev) | Editor alternativo | Vim mode, carga rápida | macOS + Linux |
+| [Aerospace](https://github.com/nikitabobko/AeroSpace) | Window manager | i3-like para macOS | Solo macOS |
+| [Hyprland](https://hyprland.org) | Window manager | Compositor Wayland, config en Lua | Solo Linux |
+| [Kitty](https://sw.kovidgoyal.net/kitty/) | Terminal alternativo | GPU-accelerated | macOS + Linux |
+| [gh](https://cli.github.com) | GitHub CLI | Auth/tokens NO viven aquí (ver nota abajo) | macOS + Linux |
+| [glow](https://github.com/charmbracelet/glow) | Renderizador de Markdown | Preview de `.md` en terminal | macOS + Linux |
+| [rtk](https://github.com/rtk-ai/rtk) | Proxy CLI token-aware | Filtra/comprime salida de comandos | macOS + Linux |
+| Catppuccin | Tema | Latte (light) / Mocha (dark), dinámico | macOS + Linux |
 
 ---
 
@@ -27,11 +32,18 @@ Configuraciones personales para un entorno de desarrollo macOS orientado a la te
 
 ## Requisitos
 
-### Homebrew
+### macOS (Homebrew)
 
 ```bash
-brew install neovim git
+brew install neovim git stow
 brew install --cask wezterm aerospace zed
+```
+
+### Arch Linux (pacman)
+
+```bash
+sudo pacman -S neovim git stow wezterm hyprland
+# Zed: yay -S zed (AUR) o descarga desde zed.dev
 ```
 
 ### Fuente
@@ -39,7 +51,8 @@ brew install --cask wezterm aerospace zed
 CommitMono Nerd Font (requerida por Neovim y WezTerm para iconos):
 
 ```bash
-brew install --cask font-commit-mono-nerd-font
+brew install --cask font-commit-mono-nerd-font   # macOS
+# Arch: yay -S ttf-commit-mono-nerd-font
 ```
 
 ### Opcional
@@ -62,21 +75,25 @@ git clone git@github.com:djego/dotfiles.git ~/dotfiles
 
 ### 2. Crear symlinks
 
+`install.sh` detecta el OS y linkea con `stow` los paquetes correspondientes desde `config/` hacia `~/.config`:
+
 ```bash
-# Asegúrate de que ~/.config existe
+cd ~/dotfiles
+./install.sh
+```
+
+Esto linkea `nvim`, `wezterm` y `zed` en ambos OS, más `aerospace` en macOS o `hypr` en Linux. Para linkear paquetes puntuales:
+
+```bash
+./install.sh nvim          # solo Neovim
+./install.sh nvim hypr     # varios paquetes
+```
+
+Equivalente manual sin el script (por si quieres invocar `stow` directamente):
+
+```bash
 mkdir -p ~/.config
-
-# Neovim
-ln -sf ~/dotfiles/.config/nvim ~/.config/nvim
-
-# WezTerm
-ln -sf ~/dotfiles/.config/wezterm ~/.config/wezterm
-
-# Aerospace
-ln -sf ~/dotfiles/.config/aerospace ~/.config/aerospace
-
-# Zed
-ln -sf ~/dotfiles/.config/zed ~/.config/zed
+stow -d ~/dotfiles/config -t ~/.config nvim wezterm zed
 ```
 
 ### 3. Inicializar Neovim
@@ -205,7 +222,7 @@ Servidores activos por defecto:
 | `ts_ls` | TypeScript / JavaScript |
 | `lua_ls` | Lua |
 
-Para añadir más servidores edita `.config/nvim/lua/plugins/init.lua` en la sección `ensure_installed` de `mason-lspconfig` y añade el nombre del server (e.g. `"pyright"`, `"rust_analyzer"`).
+Para añadir más servidores edita `config/nvim/lua/plugins/init.lua` en la sección `ensure_installed` de `mason-lspconfig` y añade el nombre del server (e.g. `"pyright"`, `"rust_analyzer"`).
 
 ---
 
@@ -325,11 +342,20 @@ Editor alternativo con carga rápida. Útil para edición rápida de archivos o 
 
 ## Estructura del repositorio
 
+Cada carpeta bajo `config/` es un paquete de [GNU Stow](https://www.gnu.org/software/stow/): `install.sh` los symlinkea individualmente a `~/.config/<paquete>`.
+
 ```
 dotfiles/
-└── .config/
-    ├── aerospace/
+├── install.sh                      # Detecta OS y corre stow por paquete
+└── config/
+    ├── aerospace/                  # Solo macOS
     │   └── aerospace.toml          # Window manager config
+    ├── hypr/                       # Solo Linux
+    │   ├── hyprland.lua            # Config principal (formato Lua de Hyprland)
+    │   ├── hypridle.conf
+    │   ├── hyprlock.conf
+    │   ├── hyprpaper.conf.unused
+    │   └── scripts/                # Helpers (color-scheme, clipboard, powermenu)
     ├── nvim/
     │   ├── init.lua                # Opciones, autocmds, colorscheme
     │   ├── lazy-lock.json          # Lockfile de plugins
@@ -343,9 +369,21 @@ dotfiles/
     │           └── ui.lua          # Catppuccin, Lualine, Bufferline
     ├── wezterm/
     │   └── wezterm.lua             # Terminal config
+    ├── kitty/
+    │   ├── kitty.conf              # Terminal config
+    │   └── theme.conf              # Catppuccin Mocha
+    ├── gh/
+    │   └── config.yml              # Preferencias de GitHub CLI (sin credenciales)
+    ├── glow/
+    │   └── glow.yml                # Preferencias de renderizado Markdown
+    ├── rtk/
+    │   ├── config.toml             # Config global de rtk
+    │   └── filters.toml            # Filtros globales de salida
     └── zed/
         └── settings.json           # Zed config
 ```
+
+> **Nota sobre `gh`**: `~/.config/gh/hosts.yml` (el token OAuth de autenticación) **no** está en este repo ni se symlinkea — es una credencial, se genera localmente con `gh auth login` en cada máquina.
 
 ---
 
@@ -355,13 +393,13 @@ dotfiles/
 
 El tema Catppuccin es consistente en todas las herramientas. Para cambiar el flavour (latte, frappe, macchiato, mocha) edita:
 
-- **Neovim**: `.config/nvim/lua/plugins/ui.lua` → `flavour`
-- **WezTerm**: `.config/wezterm/wezterm.lua` → `color_scheme`
-- **Zed**: `.config/zed/settings.json` → `theme.light` / `theme.dark`
+- **Neovim**: `config/nvim/lua/plugins/ui.lua` → `flavour`
+- **WezTerm**: `config/wezterm/wezterm.lua` → `color_scheme`
+- **Zed**: `config/zed/settings.json` → `theme.light` / `theme.dark`
 
 ### Añadir LSP servers
 
-En `.config/nvim/lua/plugins/init.lua`, dentro de `mason-lspconfig`:
+En `config/nvim/lua/plugins/init.lua`, dentro de `mason-lspconfig`:
 
 ```lua
 ensure_installed = {
@@ -374,7 +412,7 @@ ensure_installed = {
 
 ### Ajustar gaps de Aerospace
 
-En `.config/aerospace/aerospace.toml`:
+En `config/aerospace/aerospace.toml`:
 
 ```toml
 [gaps]

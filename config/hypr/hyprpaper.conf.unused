@@ -1,0 +1,8 @@
+splash = 0
+ipc = 1
+
+wallpaper {
+    monitor = eDP-1
+    path = /home/djego/Pictures/Wallpapers/catppuccin-mocha-purple-horizon.jpg
+    fit_mode = cover
+}
