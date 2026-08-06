@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Blocks commits that add credential files or values that look like secrets.
+# Activated automatically by install.sh via `git config core.hooksPath hooks`.
+# Bypass only if you are certain of a false positive: git commit --no-verify
+
+set -euo pipefail
+
+# Filenames that are always credentials, regardless of content.
+BLOCKED_PATH_PATTERNS=(
+  '(^|/)hosts\.yml$'            # gh CLI OAuth token
+  '\.netrc$'
+  '(^|/)id_(rsa|ed25519|ecdsa|dsa)$'   # private SSH keys (not *.pub)
+  '_(rsa|ed25519|ecdsa|dsa)$'
+  '\.pem$'
+  '(^|/)\.env(\..+)?$'
+  '(^|/)credentials(\.json)?$'
+  '(^|/)\.aws/credentials$'
+  '(^|/)\.pgpass$'
+)
+
+# Content patterns that look like live secrets.
+CONTENT_PATTERNS=(
+  'gh[pousr]_[A-Za-z0-9]{36,}'                                  # GitHub tokens
+  'AKIA[0-9A-Z]{16}'                                             # AWS access key id
+  'xox[baprs]-[A-Za-z0-9-]+'                                     # Slack tokens
+  'sk-[A-Za-z0-9]{20,}'                                          # OpenAI/Anthropic-style keys
+  '-----BEGIN (RSA|EC|OPENSSH|DSA|PGP )?PRIVATE KEY-----'
+)
+
+files=$(git diff --cached --name-only --diff-filter=d)
+[ -z "$files" ] && exit 0
+
+fail=0
+
+while IFS= read -r file; do
+  for pattern in "${BLOCKED_PATH_PATTERNS[@]}"; do
+    if [[ "$file" =~ $pattern ]]; then
+      echo "pre-commit: blocked '$file' — matches credential filename pattern ($pattern)" >&2
+      fail=1
+    fi
+  done
+
+  # Skip binary files and anything git can't show as text.
+  content="$(git show ":$file" 2>/dev/null || true)"
+  [ -z "$content" ] && continue
+
+  for pattern in "${CONTENT_PATTERNS[@]}"; do
+    if grep -aqE -- "$pattern" <<<"$content"; then
+      echo "pre-commit: blocked '$file' — content matches a known secret pattern ($pattern)" >&2
+      fail=1
+    fi
+  done
+done <<<"$files"
+
+if [ "$fail" -eq 1 ]; then
+  echo >&2
+  echo "pre-commit: commit aborted. If this is a false positive, re-run with --no-verify." >&2
+  exit 1
+fi
+
+exit 0

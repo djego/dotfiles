@@ -37,6 +37,10 @@ fi
 
 mkdir -p "$TARGET"
 
+if [ -d "$REPO_DIR/.git" ]; then
+  git -C "$REPO_DIR" config core.hooksPath hooks
+fi
+
 for pkg in "${packages[@]}"; do
   if [ ! -d "$REPO_DIR/config/$pkg" ]; then
     echo "Skipping '$pkg': config/$pkg not found" >&2
