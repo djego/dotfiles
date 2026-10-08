@@ -4,17 +4,158 @@
 // documentation: https://zed.dev/docs/configuring-zed
 //
 // To see all of Zed's default settings without changing your
-// custom settings, run `zed: open default settings` from the
-// command palette (cmd-shift-p / ctrl-shift-p)
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
 {
-  "icon_theme": "Catppuccin Mocha",
-  "vim_mode": true,
-  "base_keymap": "Cursor",
-  "ui_font_size": 16,
-  "buffer_font_size": 15,
+  "proxy": "",
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry"
+    },
+    "github-copilot-cli": {
+      "type": "registry"
+    }
+  },
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "right"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
+  "git_panel": {
+    "dock": "right"
+  },
+  "edit_predictions": {
+    "provider": "copilot"
+  },
+  "zoomed_padding": true,
+  "active_pane_modifiers": {
+    "border_size": 0.0,
+    "inactive_opacity": 1.0
+  },
+  "helix_mode": false,
+  "base_keymap": "VSCode",
+  "ui_font_weight": 400.0,
+  "ui_font_size": 14.0,
+  "rounded_selection": true,
+  "ui_font_family": ".ZedSans",
+  "buffer_font_weight": 400.0,
+  "icon_theme": "Zed (Default)",
+  "context_servers": {
+    "mcp-server-supabase": {
+      "enabled": true,
+      "remote": false,
+      "settings": {}
+    },
+    "mcp-server-slack": {
+      "enabled": true,
+      "remote": false,
+      "settings": {}
+    }
+  },
   "theme": {
     "mode": "system",
-    "light": "Catppuccin Latte (Blur)",
-    "dark": "Catppuccin Espresso (Blur)"
+    "dark": "Catppuccin Espresso (Blur) [Heavy]",
+    "light": "Catppuccin Latte (Blur)"
+  },
+  "buffer_font_size": 14.0,
+  "buffer_line_height": "comfortable",
+  "buffer_font_family": "CommitMono Nerd Font",
+  "vim_mode": true,
+  "cursor_blink": true,
+  "relative_line_numbers": "enabled",
+  "vertical_scroll_margin": 8,
+  "vim": {
+    "use_system_clipboard": "always",
+    "use_multiline_find": true,
+    "use_smartcase_find": true
+  },
+  "tab_bar": {
+    "show": true
+  },
+  "toolbar": {
+    "breadcrumbs": true,
+    "quick_actions": false
+  },
+  "preferred_line_length": 80,
+  "soft_wrap": "preferred_line_length",
+  "use_autoclose": false,
+  "linked_edits": true,
+  "show_whitespaces": "selection",
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
+    "edit_debounce_ms": 700,
+    "scroll_debounce_ms": 50
+  },
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 2,
+    "coloring": "indent_aware"
+  },
+  "scrollbar": {
+    "show": "auto",
+    "git_diff": true,
+    "search_results": true,
+    "selected_symbol": true,
+    "diagnostics": "all"
+  },
+  "diagnostics": {
+    "include_warnings": true
+  },
+  "languages": {
+    "TypeScript": {
+      "tab_size": 2,
+      "format_on_save": "on",
+      "formatter": "language_server"
+    },
+    "JavaScript": {
+      "tab_size": 2,
+      "format_on_save": "on"
+    },
+    "JSON": {
+      "tab_size": 2
+    },
+    "Python": {
+      "tab_size": 4,
+      "format_on_save": "on"
+    },
+    "Rust": {
+      "tab_size": 4,
+      "format_on_save": "on"
+    }
+  },
+  "git": {
+    "inline_blame": {
+      "enabled": false,
+      "delay_ms": 500
+    }
+  },
+  "terminal": {
+    "alternate_scroll": "off",
+    "blinking": "terminal_controlled",
+    "copy_on_select": true,
+    "font_family": "CommitMono Nerd Font",
+    "line_height": "standard",
+    "working_directory": "current_project_directory"
+  },
+  "agent": {
+    "dock": "left",
+    "tool_permissions": {
+      "default": "allow"
+    },
+    "default_model": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6"
+    }
   }
 }
