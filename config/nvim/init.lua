@@ -53,8 +53,6 @@ vim.opt.splitbelow = true
 -- Tabline siempre visible (necesario para bufferline)
 vim.opt.showtabline = 2
 
-vim.cmd([[colorscheme catppuccin]])
-
 -- Diagnostics: virtual text + floats con border
 vim.diagnostic.config({
   virtual_text = { prefix = "●", spacing = 2 },
@@ -71,6 +69,9 @@ for type, icon in pairs(signs) do
   local hl = "DiagnosticSign" .. type
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
 end
+
+-- Border rounded en floats (hover, signature_help, etc.)
+vim.o.winborder = "rounded"
 
 -- Cursorline solo en la ventana activa
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
@@ -92,9 +93,7 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(ev)
     local opts = { buffer = ev.buf, silent = true }
-    -- Border rounded en hover y signature_help (config pasada directo a vim.lsp.buf.*)
-    vim.keymap.set("n", "K",          function() vim.lsp.buf.hover({ border = "rounded" }) end, opts)
-    vim.keymap.set("i", "<C-k>",      function() vim.lsp.buf.signature_help({ border = "rounded" }) end, opts)
+    vim.keymap.set("n", "K",          vim.lsp.buf.hover,        opts)
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename,       opts)
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action,  opts)
     vim.keymap.set("n", "[d",         vim.diagnostic.goto_prev, opts)
