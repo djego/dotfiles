@@ -13,7 +13,7 @@ Configs live under `config/<tool>/` in this repo, one Stow package per tool. `./
 - **Neovim**: relaunch `nvim`, or `:source %` / restart for `init.lua`/plugin-spec changes. Plugin changes go through lazy.nvim, which lazily installs/loads on the next launch.
 - **Aerospace** (macOS): reload via the in-app service mode (`Alt+Shift+;` then `r`), not a process restart.
 - **Hyprland** (Linux): reload via `hyprctl reload`, or restart the compositor for changes that need a full re-init (monitor layout, etc.).
-- **WezTerm**: config is hot-reloaded automatically on save.
+- **WezTerm**: edits to the stowed (symlinked) config are not hot-reloaded; open a new WezTerm window to see them.
 - **Zed**: settings apply on save.
 
 ## Architecture
