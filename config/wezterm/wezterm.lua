@@ -57,6 +57,7 @@ local keys = {
   { key = "d", mods = "CMD|SHIFT", action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }) },
   { key = "d", mods = "CMD",       action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
   { key = "w", mods = "CMD",       action = wezterm.action.CloseCurrentPane({ confirm = true }) },
+  { key = "Enter", mods = "CMD|SHIFT", action = wezterm.action.TogglePaneZoomState },
 }
 for key, dir in pairs({ h = "Left", l = "Right", k = "Up", j = "Down" }) do
   table.insert(keys, {
