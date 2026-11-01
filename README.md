@@ -376,12 +376,27 @@ dotfiles/
     │   └── config.yml              # Preferencias de GitHub CLI (sin credenciales)
     ├── glow/
     │   └── glow.yml                # Preferencias de renderizado Markdown
+    ├── nvm/
+    │   └── nvm.zsh                 # Setup de nvm para zsh (macOS + Arch), se carga desde ~/.zshrc
     ├── rtk/
     │   ├── config.toml             # Config global de rtk
     │   └── filters.toml            # Filtros globales de salida
     └── zed/
         └── settings.json           # Zed config
 ```
+
+> **Nota sobre `nvm`**: nvm no tiene archivo de config propio, se activa desde el shell. `config/nvm/nvm.zsh` detecta dónde está instalado (Homebrew en macOS, `/usr/share/nvm` en Arch, o `~/.nvm`) y carga `nvm.sh` + completion. Instálalo con `brew install nvm` / `yay -S nvm` y añade a tu `~/.zshrc`:
+>
+> ```zsh
+> [ -r "$HOME/.config/nvm/nvm.zsh" ] && source "$HOME/.config/nvm/nvm.zsh"
+> ```
+>
+> El `~/.nvmrc` global no se versiona: es una versión de Node específica de cada máquina. La versión por defecto de las shells nuevas la define el alias de nvm, que se fija una vez por máquina (vive en `~/.nvm/alias/`, no en el repo):
+>
+> ```bash
+> nvm install 24.22.2
+> nvm alias default 24.22.2
+> ```
 
 > **Nota sobre `gh`**: `~/.config/gh/hosts.yml` (el token OAuth de autenticación) **no** está en este repo ni se symlinkea — es una credencial, se genera localmente con `gh auth login` en cada máquina.
 

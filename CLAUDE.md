@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal dotfiles, reusable across macOS and Arch Linux — declarative configuration for Neovim, WezTerm, Zed, Aerospace (macOS window manager), Hyprland (Linux window manager/compositor), Kitty, gh (GitHub CLI), glow, and rtk. There is no build, lint, or test tooling; changes are validated by symlinking into `~/.config` and running the tool (`nvim`, `wezterm`, reloading Aerospace/Hyprland, etc.).
+Personal dotfiles, reusable across macOS and Arch Linux — declarative configuration for Neovim, WezTerm, Zed, Aerospace (macOS window manager), Hyprland (Linux window manager/compositor), Kitty, gh (GitHub CLI), glow, nvm, and rtk. There is no build, lint, or test tooling; changes are validated by symlinking into `~/.config` and running the tool (`nvim`, `wezterm`, reloading Aerospace/Hyprland, etc.).
 
 ## Applying changes
 
@@ -61,6 +61,10 @@ CLI preferences only (git protocol, aliases, pager). **`~/.config/gh/hosts.yml` 
 ### glow (`config/glow/glow.yml`)
 
 Markdown renderer preferences (style, width, pager off).
+
+### nvm (`config/nvm/nvm.zsh`)
+
+Shell snippet, not a config file (nvm has none). Stowed to `~/.config/nvm/nvm.zsh` and `source`d from the user's `~/.zshrc`; it sets `NVM_DIR` and loads `nvm.sh`/completion from whichever of Homebrew (Apple Silicon/Intel), `/usr/share/nvm` (Arch) or `~/.nvm` exists. `~/.zshrc` itself is deliberately not in this repo. The global `~/.nvmrc` is per-machine and not versioned.
 
 ### rtk (`config/rtk/`)
 
