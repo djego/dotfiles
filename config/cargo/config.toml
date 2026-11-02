@@ -1,0 +1,19 @@
+# Global cargo config. Cargo does not read ~/.config: install.sh links this
+# package to ~/.cargo/config.toml. Project-level .cargo/config.toml overrides it.
+# Never put registry tokens here — they belong in ~/.cargo/credentials.toml,
+# which is deliberately not versioned.
+
+[alias]
+b = "build"
+c = "check"
+t = "test"
+r = "run"
+rr = "run --release"
+lint = "clippy --all-targets --all-features -- -D warnings"
+
+[net]
+# Use the system git (and so your SSH keys / credential helpers) for git deps.
+git-fetch-with-cli = true
+
+[term]
+color = "auto"

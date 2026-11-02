@@ -9,7 +9,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="$HOME/.config"
 
-COMMON_PACKAGES=(nvim wezterm zed rtk gh glow kitty nvm)
+COMMON_PACKAGES=(nvim wezterm zed rtk gh glow kitty nvm rust rustfmt cargo)
 MACOS_PACKAGES=(aerospace)
 LINUX_PACKAGES=(hypr)
 
@@ -37,6 +37,24 @@ fi
 
 mkdir -p "$TARGET"
 
+# Where each package gets linked. Almost everything lives in ~/.config/<pkg>, with two exceptions:
+#   - cargo ignores ~/.config and only reads ~/.cargo/config.toml.
+#   - rustfmt uses the platform config dir: ~/.config on Linux, but
+#     ~/Library/Application Support on macOS.
+target_for() {
+  case "$1" in
+    cargo) echo "$HOME/.cargo" ;;
+    rustfmt)
+      if [ "$(uname -s)" = "Darwin" ]; then
+        echo "$HOME/Library/Application Support/rustfmt"
+      else
+        echo "$TARGET/rustfmt"
+      fi
+      ;;
+    *) echo "$TARGET/$1" ;;
+  esac
+}
+
 if [ -d "$REPO_DIR/.git" ]; then
   git -C "$REPO_DIR" config core.hooksPath hooks
 fi
@@ -46,7 +64,8 @@ for pkg in "${packages[@]}"; do
     echo "Skipping '$pkg': config/$pkg not found" >&2
     continue
   fi
-  echo "Linking $pkg -> $TARGET/$pkg"
+  dest="$(target_for "$pkg")"
+  echo "Linking $pkg -> $dest"
   # Target is $TARGET/$pkg (not $TARGET): stow mirrors a package's *contents*
   # directly under the target root, it does not nest them under the package
   # name. Scoping the target per-package is what makes ~/.config/nvim itself
@@ -54,6 +73,6 @@ for pkg in "${packages[@]}"; do
   # requires the target dir to pre-exist, so ~/.config/nvim ends up a real
   # directory of per-file symlinks rather than one single symlink - same
   # net effect for the tool, just not tree-folded.
-  mkdir -p "$TARGET/$pkg"
-  stow -v -d "$REPO_DIR/config" -t "$TARGET/$pkg" "$pkg"
+  mkdir -p "$dest"
+  stow -v -d "$REPO_DIR/config" -t "$dest" "$pkg"
 done

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Personal dotfiles, reusable across macOS and Arch Linux — declarative configuration for Neovim, WezTerm, Zed, Aerospace (macOS window manager), Hyprland (Linux window manager/compositor), Kitty, gh (GitHub CLI), glow, nvm, and rtk. There is no build, lint, or test tooling; changes are validated by symlinking into `~/.config` and running the tool (`nvim`, `wezterm`, reloading Aerospace/Hyprland, etc.).
+Personal dotfiles, reusable across macOS and Arch Linux — declarative configuration for Neovim, WezTerm, Zed, Aerospace (macOS window manager), Hyprland (Linux window manager/compositor), Kitty, gh (GitHub CLI), glow, nvm, Rust (rustup/cargo/rustfmt), and rtk. There is no build, lint, or test tooling; changes are validated by symlinking into `~/.config` and running the tool (`nvim`, `wezterm`, reloading Aerospace/Hyprland, etc.).
 
 ## Applying changes
 
@@ -65,6 +65,10 @@ Markdown renderer preferences (style, width, pager off).
 ### nvm (`config/nvm/nvm.zsh`)
 
 Shell snippet, not a config file (nvm has none). Stowed to `~/.config/nvm/nvm.zsh` and `source`d from the user's `~/.zshrc`; it sets `NVM_DIR` and loads `nvm.sh`/completion from whichever of Homebrew (Apple Silicon/Intel), `/usr/share/nvm` (Arch) or `~/.nvm` exists. `~/.zshrc` itself is deliberately not in this repo. The global `~/.nvmrc` is per-machine and not versioned.
+
+### Rust (`config/rust/`, `config/rustfmt/`, `config/cargo/`)
+
+Three packages because each tool reads its config from a different place: `rust/rust.zsh` is a shell snippet (PATH via rustup's `~/.cargo/env`) sourced from `~/.zshenv`; `rustfmt/rustfmt.toml` is the global rustfmt style; `cargo/config.toml` is linked to `~/.cargo/config.toml`. Don't put registry tokens in the cargo config (`~/.cargo/credentials.toml` stays unversioned). clippy has no global config file, so there's no package for it. `install.sh` special-cases link targets in `target_for()`: `cargo` → `~/.cargo`, and `rustfmt` → `~/Library/Application Support/rustfmt` on macOS (rustfmt uses the platform config dir, not `~/.config`) / `~/.config/rustfmt` on Linux. The Neovim side is `rust_analyzer` in `lua/plugins/init.lua` (clippy as checker).
 
 ### rtk (`config/rtk/`)
 

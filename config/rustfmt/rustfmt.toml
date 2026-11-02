@@ -1,0 +1,7 @@
+# Global rustfmt config. rustfmt reads ~/.config/rustfmt/rustfmt.toml when the
+# project has no rustfmt.toml / .rustfmt.toml of its own (project config wins).
+#
+# Stable options only, so it works on the stable toolchain. These are the
+# defaults, set explicitly so the global style is visible and easy to tweak.
+max_width = 100
+newline_style = "Unix"

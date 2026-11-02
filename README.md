@@ -82,7 +82,7 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-Esto linkea `nvim`, `wezterm` y `zed` en ambos OS, más `aerospace` en macOS o `hypr` en Linux. Para linkear paquetes puntuales:
+Esto linkea `nvim`, `wezterm`, `zed`, `rtk`, `gh`, `glow`, `kitty`, `nvm`, `rust`, `rustfmt` y `cargo` en ambos OS, más `aerospace` en macOS o `hypr` en Linux. La mayoría va a `~/.config/<paquete>`; `cargo` va a `~/.cargo` y `rustfmt` a `~/Library/Application Support/rustfmt` en macOS (rustfmt usa el directorio de config de la plataforma). Para linkear paquetes puntuales:
 
 ```bash
 ./install.sh nvim          # solo Neovim
@@ -221,8 +221,9 @@ Servidores activos por defecto:
 |--------|---------|
 | `ts_ls` | TypeScript / JavaScript |
 | `lua_ls` | Lua |
+| `rust_analyzer` | Rust (con `clippy` como checker al guardar) |
 
-Para añadir más servidores edita `config/nvim/lua/plugins/init.lua` en la sección `ensure_installed` de `mason-lspconfig` y añade el nombre del server (e.g. `"pyright"`, `"rust_analyzer"`).
+Para añadir más servidores edita `config/nvim/lua/plugins/init.lua` en la sección `ensure_installed` de `mason-lspconfig` y añade el nombre del server (e.g. `"pyright"`, `"gopls"`).
 
 ---
 
@@ -372,6 +373,8 @@ dotfiles/
     ├── kitty/
     │   ├── kitty.conf              # Terminal config
     │   └── theme.conf              # Catppuccin Mocha
+    ├── cargo/
+    │   └── config.toml             # Aliases y opciones de cargo → ~/.cargo/config.toml
     ├── gh/
     │   └── config.yml              # Preferencias de GitHub CLI (sin credenciales)
     ├── glow/
@@ -381,6 +384,10 @@ dotfiles/
     ├── rtk/
     │   ├── config.toml             # Config global de rtk
     │   └── filters.toml            # Filtros globales de salida
+    ├── rust/
+    │   └── rust.zsh                # PATH de rustup/cargo, se carga desde ~/.zshenv
+    ├── rustfmt/
+    │   └── rustfmt.toml            # Estilo global de rustfmt
     └── zed/
         └── settings.json           # Zed config
 ```
@@ -397,6 +404,19 @@ dotfiles/
 > nvm install 24.22.2
 > nvm alias default 24.22.2
 > ```
+
+> **Nota sobre Rust**: se instala con [rustup](https://rustup.rs) (`curl https://sh.rustup.rs -sSf | sh`, o `sudo pacman -S rustup && rustup default stable` en Arch), y se mantiene al día con `rustup update`. Son tres paquetes porque cada herramienta lee su config de un sitio distinto:
+>
+> - `rust/rust.zsh` pone `~/.cargo/bin` en el `PATH`. Se carga desde `~/.zshenv` (no `~/.zshrc`, para que también lo vean shells no interactivos y editores):
+>
+>   ```zsh
+>   [ -r "$HOME/.config/rust/rust.zsh" ] && source "$HOME/.config/rust/rust.zsh"
+>   ```
+>
+> - `cargo/config.toml` → `~/.cargo/config.toml`: aliases (`cargo b/c/t/r/rr/lint`) y `git-fetch-with-cli`. Los tokens de registry van en `~/.cargo/credentials.toml`, que **no** se versiona.
+> - `rustfmt/rustfmt.toml` es la config global de formato; un `rustfmt.toml` dentro del proyecto siempre tiene prioridad.
+>
+> clippy no tiene config global (solo lee un `clippy.toml` por proyecto), así que no hay paquete para él; el LSP de Neovim ya lo usa como checker.
 
 > **Nota sobre `gh`**: `~/.config/gh/hosts.yml` (el token OAuth de autenticación) **no** está en este repo ni se symlinkea — es una credencial, se genera localmente con `gh auth login` en cada máquina.
 
@@ -420,8 +440,9 @@ En `config/nvim/lua/plugins/init.lua`, dentro de `mason-lspconfig`:
 ensure_installed = {
   "ts_ls",
   "lua_ls",
+  "rust_analyzer",
   "pyright",        -- Python
-  "rust_analyzer",  -- Rust
+  "gopls",          -- Go
 },
 ```
 

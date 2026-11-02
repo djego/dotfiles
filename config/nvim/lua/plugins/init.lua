@@ -168,7 +168,7 @@ return {
     event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("mason-lspconfig").setup {
-        ensure_installed = { "ts_ls", "lua_ls", "jsonls" },
+        ensure_installed = { "ts_ls", "lua_ls", "jsonls", "rust_analyzer" },
         automatic_enable = { exclude = { "stylua" } },
       }
       vim.lsp.config("ts_ls", {})
@@ -182,7 +182,15 @@ return {
         }
       })
       vim.lsp.config("jsonls", {})
-      vim.lsp.enable({ "ts_ls", "lua_ls", "jsonls" })
+      vim.lsp.config("rust_analyzer", {
+        settings = {
+          ["rust-analyzer"] = {
+            check = { command = "clippy" },
+            cargo = { allFeatures = true },
+          },
+        },
+      })
+      vim.lsp.enable({ "ts_ls", "lua_ls", "jsonls", "rust_analyzer" })
     end
   }
 
